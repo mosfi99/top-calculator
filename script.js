@@ -28,15 +28,22 @@ function clearDisplay() {
 	updateDisplay();
 }
 
-// todo2: create a delete function for deleteBtn where the last digit is removed
+function deleteLastDigit() {
+	calculator.currentInput = calculator.currentInput.slice(0, -1);
+	updateDisplay();
+}
 
 // Event listeners
-// todo1: create a initEventListeners function with all event listeners inside
-elements.numBtns.forEach((btn) => {
-	btn.addEventListener('click', () => appendNumber(btn.textContent));
-});
-
-elements.clearBtn.addEventListener('click', clearDisplay);
+function initEventListeners() {
+	// number buttons
+	elements.numBtns.forEach((btn) => {
+		btn.addEventListener('click', () => appendNumber(btn.textContent));
+	});
+	// clear button
+	elements.clearBtn.addEventListener('click', clearDisplay);
+	// delete button
+	elements.delBtn.addEventListener('click', deleteLastDigit);
+}
 
 // Calculation Logic
 const add = (a, b) => a + b;
