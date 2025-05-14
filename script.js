@@ -1,6 +1,8 @@
 // DOM elements
 const elements = {
-	display: document.querySelector('.text'),
+	previousDisplay: document.querySelector('.previous-display'),
+	currentDisplay: document.querySelector('.current-display'),
+	operatorDisplay: document.querySelector('.operator-display'),
 	numBtns: document.querySelectorAll('.btn-number'),
 	operatorBtns: document.querySelectorAll('.btn-operator'),
 	clearBtn: document.querySelector('.btn-clear'),
@@ -11,25 +13,48 @@ const elements = {
 // State management
 const calculator = {
 	currentInput: '',
+	previousInput: '',
+	operator: '',
 };
 
 // Display functions
 function updateDisplay() {
-	elements.display.textContent = calculator.currentInput;
+	elements.previousDisplay.textContent = calculator.previousInput;
+	elements.operatorDisplay.textContent = calculator.operator;
+	elements.currentDisplay.textContent = calculator.currentInput;
 }
 
 function appendNumber(num) {
-	calculator.currentInput += num;
+	calculator.currentInput += num; // User enters digits
 	updateDisplay();
 }
-
-function clearDisplay() {
-	calculator.currentInput = '';
+function setOperator(symbol) {
+	// If current is not empty AND previous is not set,
+	if (calculator.currentInput !== '' && calculator.previousInput === '') {
+		calculator.operator = symbol; // operator can be stored and set.
+		calculator.previousInput = calculator.currentInput; // previous stores current.
+		calculator.currentInput = ''; // current reset for next input.
+	}
+	// TODO:
+	// If the numbers are set for bot (not empty)
+	if (calculator.currentInput !== '' && calculator.previousInput !== '') {
+		// next time an operator is clicked it should:
+		// first, evaluate the initial pair of numbers (12 + 7),
+		// then display the result of that calculation (19).
+		// Finally, use that result (19) as the first number in a new calculation, along with the next operator (-).
+	}
 	updateDisplay();
 }
 
 function deleteLastDigit() {
 	calculator.currentInput = calculator.currentInput.slice(0, -1);
+	updateDisplay();
+}
+
+function clearDisplay() {
+	calculator.currentInput = '';
+	calculator.previousInput = '';
+	calculator.operator = '';
 	updateDisplay();
 }
 
@@ -43,6 +68,11 @@ function initEventListeners() {
 	elements.clearBtn.addEventListener('click', clearDisplay);
 	// delete button
 	elements.delBtn.addEventListener('click', deleteLastDigit);
+
+	// select operator
+	elements.operatorBtns.forEach((btn) => {
+		btn.addEventListener('click', () => setOperator(btn.textContent));
+	});
 }
 
 // Calculation Logic
