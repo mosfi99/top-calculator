@@ -11,7 +11,12 @@ body {
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
-	background: rgb(77, 75, 108);
+	background: #1a1a40;
+	background: linear-gradient(
+		0deg,
+		rgba(26, 26, 64, 1) 0%,
+		rgba(77, 75, 108, 1) 86%
+	);
 }
 
 .calculator {
