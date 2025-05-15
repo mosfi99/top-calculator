@@ -9,34 +9,40 @@
 body {
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	min-height: 100vh;
-	background-color: rgb(78, 76, 110);
+	background: rgb(77, 75, 108);
 }
 
 .calculator {
 	max-width: 320px;
-	height: 100%;
 	width: 100%;
-	margin-top: 180px;
-	padding: 1rem;
-	border-radius: 10px;
-	border: 1.5px solid rgb(0, 0, 0);
-	background-color: rgb(240, 248, 255);
+	padding: 1.5rem;
+	border-radius: 20px;
+	background-color: rgb(247, 249, 252);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
 }
 
 .display {
 	text-align: right;
-	font-size: 1.5rem;
-	min-height: 74px;
-	margin-bottom: 1rem;
-	padding: 0.5rem;
-	border-radius: 5px;
-	border: 1px solid rgb(0, 0, 0);
-	background-color: rgb(119, 161, 132);
+	font-size: 1.6rem;
+	min-height: 86px;
+	margin-bottom: 1.2rem;
+	padding: 0.8rem;
+	border-radius: 12px;
+	background: rgb(161, 194, 174);
+	color: rgb(45, 58, 50);
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.display,
+button {
+	font-family: monospace, sans-serif;
+}
+
 .calculation-line,
 .result-line {
-	min-height: 28px;
+	min-height: 30px;
 }
 
 .previous-display,
@@ -48,14 +54,48 @@ body {
 .buttons {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: 0.5rem;
+	gap: 1rem;
+}
+
+button {
+	height: 48px;
+	font-size: 1.6rem;
+	border: none;
+	border-radius: 12px;
+	background-color: rgb(226, 232, 240);
+	color: rgb(26, 32, 44);
+	cursor: pointer;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+	background-color: rgb(203, 213, 225);
+}
+
+button:active {
+	transform: scale(0.98);
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-operator {
+	color: rgb(255, 255, 255);
+	background-color: rgb(139, 166, 202);
+	font-size: 1.8rem;
+}
+
+.btn-operator:hover {
+	color: rgb(255, 255, 255);
+	background-color: rgb(121, 140, 167);
 }
 
 .btn-clear,
 .btn-delete {
 	grid-column: span 2;
+	background-color: rgb(211, 154, 203);
+	color: rgb(255, 255, 255);
 }
 
-button {
-	height: 40px;
+.btn-clear:hover,
+.btn-delete:hover {
+	background-color: rgb(184, 140, 178);
 }
