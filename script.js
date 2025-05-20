@@ -14,76 +14,100 @@ const elements = {
 // State management
 const calculator = {
 	currentInput: '',
-	previousInput: '',
-	operator: '',
-	hasFirstInput: false,
-	hasSecondInput: false,
+	firstOperand: null,
+	operator: null,
+	waitingForSecondOperand: false,
 	result: '',
 };
 
-// Operation variables
-let firstNumber = null;
-let operator = null;
-let secondNumber = null;
+// Global variables
+let result = null;
 
 // Display functions
 function updateDisplay() {
-	elements.previousDisplay.textContent = calculator.previousInput;
+	elements.previousDisplay.textContent = calculator.firstOperand;
 	elements.operatorDisplay.textContent = calculator.operator;
 	elements.currentDisplay.textContent = calculator.currentInput;
 	elements.resultDisplay.textContent = calculator.result;
 }
 
-function appendNumber(num) {
-	calculator.currentInput += num; // User enters digits
-	updateDisplay();
+function appendDigit(digit) {
+	// Only append digits if there is no result
+	if (calculator.result === '') {
+		// Check if we are waiting for the user to set the second value
+		if (calculator.waitingForSecondOperand) {
+			calculator.currentInput = digit;
+			calculator.waitingForSecondOperand = false;
+		} else {
+			calculator.currentInput += digit; // User enters digits
+		}
+		updateDisplay();
+	}
 }
 
-function setOperator(symbol) {
-	// If current is not empty AND second is not set
-	if (calculator.currentInput !== '' && calculator.previousInput === '') {
-		// operator can be stored and set.
-		calculator.operator = symbol;
-		// previous stores first number.
-		calculator.previousInput = calculator.currentInput;
-		// current is reset for next input.
+function setOperator(op) {
+	if (calculator.result) {
+		calculator.firstOperand = result;
+		calculator.operator = op;
+		calculator.result = '';
 		calculator.currentInput = '';
-		// First number is set
-		firstNumber = Number(calculator.previousInput);
-		calculator.hasFirstInput = true;
-		state(); // debugging
+		updateDisplay();
+		return;
 	}
 	// If first number is set and there is an operator, but the next number is not set yet:
-	if (calculator.operator && calculator.currentInput === '') {
-		calculator.operator = symbol; // change the operator.
+	if (calculator.operator && calculator.waitingForSecondOperand) {
+		// Change the operator before typing second operand
+		calculator.operator = op;
+		updateDisplay();
+		return;
 	}
+
+	// If current is not empty AND firstOperand has not being set yet:
+	if (calculator.currentInput !== '' && calculator.firstOperand === null) {
+		// set first operand
+		calculator.firstOperand = parseFloat(calculator.currentInput);
+		calculator.currentInput = '';
+
+		// case where the operator is already set:
+	} else if (calculator.operator) {
+		result = operate(
+			calculator.firstOperand,
+			calculator.operator,
+			parseFloat(calculator.currentInput)
+		);
+		calculator.result = `= ${result}`;
+		calculator.firstOperand = result;
+		calculator.currentInput = '';
+		calculator.result = '';
+	}
+
+	calculator.operator = op; // set the operator
+	calculator.waitingForSecondOperand = true;
 	updateDisplay();
 }
 
 function getResult() {
-	// maybe i could join this if with the next one just by checking:  calculator.currentInput !== '' and there is no need fot the second input boolean
-	if (calculator.hasFirstInput && calculator.currentInput !== '') {
-		secondNumber = Number(calculator.currentInput);
-		calculator.hasSecondInput = true;
-	}
-
-	if (calculator.hasFirstInput && calculator.hasSecondInput) {
-		operator = calculator.operator;
-		// next time an operator is clicked it should:
-		// first, evaluate the initial pair of numbers (12 + 7),
-		const result = operate(firstNumber, operator, secondNumber);
-		// then display the result of that calculation (19).
+	if (
+		calculator.operator &&
+		calculator.firstOperand !== null &&
+		calculator.currentInput !== ''
+	) {
+		result = operate(
+			calculator.firstOperand,
+			calculator.operator,
+			parseFloat(calculator.currentInput)
+		);
 		calculator.result = `= ${result}`;
-		// TODO:
-		// Finally, use that result (19) as the first number in a new calculation, along with the next operator (-).
+		calculator.waitingForSecondOperand = true;
+		updateDisplay();
+		console.log('equals');
 	}
-	updateDisplay();
 }
 
 // still need to make decimal functionality
 
 function deleteLastDigit() {
-	if (!calculator.result){
+	if (!calculator.result) {
 		calculator.currentInput = calculator.currentInput.slice(0, -1);
 		updateDisplay();
 	}
@@ -91,30 +115,28 @@ function deleteLastDigit() {
 
 function clearDisplay() {
 	calculator.currentInput = '';
-	calculator.previousInput = '';
-	calculator.operator = '';
+	calculator.firstOperand = null;
+	calculator.operator = null;
+	calculator.waitingForSecondOperand = false;
 	calculator.result = '';
-	firstNumber = null;
-	secondNumber = null;
 	updateDisplay();
-	state();
 }
 
 // Event listeners
 function initEventListeners() {
-	// number buttons
+	// numbers
 	elements.numBtns.forEach((btn) => {
-		btn.addEventListener('click', () => appendNumber(btn.textContent));
+		btn.addEventListener('click', () => appendDigit(btn.textContent));
 	});
-	// select operator
+	// operators
 	elements.operatorBtns.forEach((btn) => {
 		btn.addEventListener('click', () => setOperator(btn.textContent));
 	});
-	// clear button
+	// clear
 	elements.clearBtn.addEventListener('click', clearDisplay);
-	// delete button
+	// delete
 	elements.delBtn.addEventListener('click', deleteLastDigit);
-	// equals button
+	// equals
 	elements.equalsBtn.addEventListener('click', getResult);
 }
 
@@ -146,9 +168,3 @@ function init() {
 }
 
 init();
-
-function state() {
-	console.log('pre', firstNumber);
-	console.log('op', operator);
-	console.log('cu', secondNumber);
-}
