@@ -1,3 +1,11 @@
+/*
+TODO:
+- Prevent overflow for all numbers on display
+- Handle division by 0
+- Implement decimals functionality.
+- After a result with equals, pressing a new digit should clear the result and start a new calculation instead of appending the digit to the existing result. 
+*/
+
 // DOM elements
 const elements = {
 	previousDisplay: document.querySelector('.previous-display'),
@@ -108,8 +116,6 @@ function getResult() {
 function round(num) {
 	return Math.round(num * 100) / 100;
 }
-
-// still need to make decimal functionality
 
 function deleteLastDigit() {
 	if (!calculator.result) {
