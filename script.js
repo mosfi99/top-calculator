@@ -75,6 +75,7 @@ function setOperator(op) {
 			calculator.operator,
 			parseFloat(calculator.currentInput)
 		);
+		result = round(result);
 		calculator.result = `= ${result}`;
 		calculator.firstOperand = result;
 		calculator.currentInput = '';
@@ -97,11 +98,15 @@ function getResult() {
 			calculator.operator,
 			parseFloat(calculator.currentInput)
 		);
+		result = round(result);
 		calculator.result = `= ${result}`;
 		calculator.waitingForSecondOperand = true;
 		updateDisplay();
-		console.log('equals');
 	}
+}
+
+function round(num) {
+	return Math.round(num * 100) / 100;
 }
 
 // still need to make decimal functionality
