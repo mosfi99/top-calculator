@@ -1,6 +1,6 @@
 /*
 TODO:
-- Prevent overflow for all numbers on display
+- Use .equals-display to make a toggle functionality when equals button is pressed
 - Handle division by 0
 - Implement decimals functionality.
 - After a result with equals, pressing a new digit should clear the result and start a new calculation instead of appending the digit to the existing result. 
@@ -8,10 +8,10 @@ TODO:
 
 // DOM elements
 const elements = {
-	previousDisplay: document.querySelector('.previous-display'),
+	firstOperandDisplay: document.querySelector('.first-operand-display'),
 	currentDisplay: document.querySelector('.current-display'),
 	operatorDisplay: document.querySelector('.operator-display'),
-	resultDisplay: document.querySelector('.result'),
+	resultDisplay: document.querySelector('.result-display'),
 	numBtns: document.querySelectorAll('.btn-number'),
 	operatorBtns: document.querySelectorAll('.btn-operator'),
 	clearBtn: document.querySelector('.btn-clear'),
@@ -33,7 +33,7 @@ let result = null;
 
 // Display functions
 function updateDisplay() {
-	elements.previousDisplay.textContent = calculator.firstOperand;
+	elements.firstOperandDisplay.textContent = calculator.firstOperand;
 	elements.operatorDisplay.textContent = calculator.operator;
 	elements.currentDisplay.textContent = calculator.currentInput;
 	elements.resultDisplay.textContent = calculator.result;
@@ -84,7 +84,7 @@ function setOperator(op) {
 			parseFloat(calculator.currentInput)
 		);
 		result = round(result);
-		calculator.result = `= ${result}`;
+		calculator.result = `${result}`;
 		calculator.firstOperand = result;
 		calculator.currentInput = '';
 		calculator.result = '';
@@ -107,7 +107,7 @@ function getResult() {
 			parseFloat(calculator.currentInput)
 		);
 		result = round(result);
-		calculator.result = `= ${result}`;
+		calculator.result = `${result}`;
 		calculator.waitingForSecondOperand = true;
 		updateDisplay();
 	}
