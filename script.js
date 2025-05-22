@@ -1,8 +1,6 @@
 /*
 TODO:
-- Implement decimals functionality.
 - Handle division by 0
-- After a result with equals, pressing a new digit should clear the result and start a new calculation instead of appending the digit to the existing result. 
 */
 
 // DOM elements
@@ -43,6 +41,10 @@ function updateDisplay() {
 }
 
 function appendDigit(digit) {
+	if (calculator.result !== '') {
+		clearValues();
+	}
+
 	// Only append digits if there is no result
 	if (calculator.result === '') {
 		// Check if we are waiting for the user to set the second value
@@ -65,10 +67,9 @@ function appendDecimal() {
 
 function setOperator(op) {
 	if (calculator.result) {
+		clearValues();
 		calculator.firstOperand = result;
 		calculator.operator = op;
-		calculator.result = '';
-		calculator.currentInput = '';
 		updateDisplay();
 		return;
 	}
@@ -135,7 +136,7 @@ function deleteLastDigit() {
 	}
 }
 
-function clearDisplay() {
+function clearValues() {
 	calculator.currentInput = '';
 	calculator.firstOperand = null;
 	calculator.operator = null;
@@ -156,7 +157,7 @@ function initEventListeners() {
 		btn.addEventListener('click', () => setOperator(btn.textContent));
 	});
 	// clear
-	elements.clearBtn.addEventListener('click', clearDisplay);
+	elements.clearBtn.addEventListener('click', clearValues);
 	// delete
 	elements.delBtn.addEventListener('click', deleteLastDigit);
 	// equals
