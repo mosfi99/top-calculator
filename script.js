@@ -1,8 +1,7 @@
 /*
 TODO:
-- Use .equals-display to make a toggle functionality when equals button is pressed
-- Handle division by 0
 - Implement decimals functionality.
+- Handle division by 0
 - After a result with equals, pressing a new digit should clear the result and start a new calculation instead of appending the digit to the existing result. 
 */
 
@@ -17,6 +16,8 @@ const elements = {
 	clearBtn: document.querySelector('.btn-clear'),
 	delBtn: document.querySelector('.btn-delete'),
 	equalsBtn: document.querySelector('.btn-equals'),
+	equalsDisplay: document.querySelector('.equals-display'),
+	decimal: document.querySelector('.btn-decimal'),
 };
 
 // State management
@@ -25,6 +26,7 @@ const calculator = {
 	firstOperand: null,
 	operator: null,
 	waitingForSecondOperand: false,
+	equals: '',
 	result: '',
 };
 
@@ -37,6 +39,7 @@ function updateDisplay() {
 	elements.operatorDisplay.textContent = calculator.operator;
 	elements.currentDisplay.textContent = calculator.currentInput;
 	elements.resultDisplay.textContent = calculator.result;
+	elements.equalsDisplay.textContent = calculator.equals;
 }
 
 function appendDigit(digit) {
@@ -49,6 +52,13 @@ function appendDigit(digit) {
 		} else {
 			calculator.currentInput += digit; // User enters digits
 		}
+		updateDisplay();
+	}
+}
+
+function appendDecimal() {
+	if (!calculator.currentInput.includes('.')) {
+		calculator.currentInput += '.';
 		updateDisplay();
 	}
 }
@@ -108,6 +118,7 @@ function getResult() {
 		);
 		result = round(result);
 		calculator.result = `${result}`;
+		calculator.equals = '=';
 		calculator.waitingForSecondOperand = true;
 		updateDisplay();
 	}
@@ -129,6 +140,7 @@ function clearDisplay() {
 	calculator.firstOperand = null;
 	calculator.operator = null;
 	calculator.waitingForSecondOperand = false;
+	calculator.equals = '';
 	calculator.result = '';
 	updateDisplay();
 }
@@ -149,6 +161,8 @@ function initEventListeners() {
 	elements.delBtn.addEventListener('click', deleteLastDigit);
 	// equals
 	elements.equalsBtn.addEventListener('click', getResult);
+	// decimals
+	elements.decimal.addEventListener('click', appendDecimal);
 }
 
 // Calculation Logic
