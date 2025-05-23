@@ -2,6 +2,8 @@
 
 A simple, stylish calculator built with HTML, CSS, and JavaScript.
 
+![Calculator](image.png)
+
 ## Features
 
 - **Basic Arithmetic:** Supports addition, subtraction, multiplication, and division.
