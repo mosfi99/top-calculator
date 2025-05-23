@@ -64,7 +64,7 @@ function setOperator(op) {
 		return;
 	}
 
-	if (calculator.result) {
+	if (calculator.result !== '') {
 		const result = calculator.result;
 		clearValues();
 		calculator.firstOperand = result;
@@ -88,14 +88,16 @@ function setOperator(op) {
 
 		// case where the operator is already set:
 	} else if (calculator.operator) {
-		calculator.result = getResult(
-			calculator.firstOperand,
-			calculator.operator,
-			calculator.currentInput
-		);
-		calculator.firstOperand = calculator.result;
-		calculator.currentInput = '';
-		calculator.result = '';
+		if (calculator.currentInput !== '') {
+			calculator.result = getResult(
+				calculator.firstOperand,
+				calculator.operator,
+				calculator.currentInput
+			);
+			calculator.firstOperand = calculator.result;
+			calculator.currentInput = '';
+			calculator.result = '';
+		}
 	}
 
 	calculator.operator = op; // set the operator
@@ -104,10 +106,6 @@ function setOperator(op) {
 }
 
 function setResult() {
-	// Little Easter Egg for my special person:
-	if (calculator.currentInput === '02082024' || '2082024') {
-		elements.resultDisplay.textContent = 'i <3 u';
-	}
 	if (
 		calculator.operator &&
 		calculator.firstOperand !== '' &&
