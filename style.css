@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200..900&display=swap');
-
 *,
 *::before,
 *::after {
@@ -30,7 +28,7 @@ body {
 
 .display,
 button {
-	font-family: 'DM Source Code Pro', monospace, sans-serif;
+	font-family: monospace, sans-serif;
 }
 
 .display {
