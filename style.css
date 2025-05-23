@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono&display=swap');
+
 *,
 *::before,
 *::after {
@@ -28,7 +30,7 @@ body {
 
 .display,
 button {
-	font-family: monospace, sans-serif;
+	font-family: 'DM Mono', monospace, sans-serif;
 }
 
 .display {
