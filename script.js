@@ -13,11 +13,11 @@ const elements = {
 	decimal: document.querySelector('.btn-decimal'),
 };
 
-// State management
+// State managment
 const calculator = {
 	currentInput: '',
-	firstOperand: null,
-	operator: null,
+	firstOperand: '',
+	operator: '',
 	waitingForSecondOperand: false,
 	equals: '',
 	result: '',
@@ -36,28 +36,34 @@ function appendDigit(digit) {
 	if (calculator.result !== '') {
 		clearValues();
 	}
+	if (calculator.waitingForSecondOperand) {
+		calculator.currentInput += digit;
+		calculator.waitingForSecondOperand = false;
+	} else {
+		calculator.currentInput += digit; // User enters digits
+	}
+	updateDisplay();
+}
 
-	// Only append digits if there is no result
-	if (calculator.result === '') {
-		// Check if we are waiting for the user to set the second value
-		if (calculator.waitingForSecondOperand) {
-			calculator.currentInput = digit;
-			calculator.waitingForSecondOperand = false;
+function appendDecimal() {
+	if (calculator.result !== '') {
+		clearValues();
+	}
+	if (!calculator.currentInput.includes('.')) {
+		if (calculator.currentInput === '') {
+			calculator.currentInput = '0.';
 		} else {
-			calculator.currentInput += digit; // User enters digits
+			calculator.currentInput += '.';
 		}
 		updateDisplay();
 	}
 }
 
-function appendDecimal() {
-	if (!calculator.currentInput.includes('.')) {
-		calculator.currentInput += '.';
-		updateDisplay();
-	}
-}
-
 function setOperator(op) {
+	if (calculator.firstOperand === '' && calculator.currentInput === '') {
+		return;
+	}
+
 	if (calculator.result) {
 		const result = calculator.result;
 		clearValues();
@@ -75,9 +81,9 @@ function setOperator(op) {
 	}
 
 	// If current is not empty AND firstOperand has not being set yet:
-	if (calculator.currentInput !== '' && calculator.firstOperand === null) {
+	if (calculator.firstOperand === '' && calculator.currentInput !== '') {
 		// set first operand
-		calculator.firstOperand = parseFloat(calculator.currentInput);
+		calculator.firstOperand = calculator.currentInput;
 		calculator.currentInput = '';
 
 		// case where the operator is already set:
@@ -100,7 +106,7 @@ function setOperator(op) {
 function setResult() {
 	if (
 		calculator.operator &&
-		calculator.firstOperand !== null &&
+		calculator.firstOperand !== '' &&
 		calculator.currentInput !== ''
 	) {
 		calculator.result = getResult(
@@ -129,8 +135,9 @@ function handleError() {
 	return 'Error. Press Clear';
 }
 
+const ROUND_PRECISION = 100; // two decimal places
 function round(num) {
-	return Math.round(num * 100) / 100;
+	return Math.round(num * ROUND_PRECISION) / ROUND_PRECISION;
 }
 
 function deleteLastDigit() {
@@ -142,8 +149,8 @@ function deleteLastDigit() {
 
 function clearValues() {
 	calculator.currentInput = '';
-	calculator.firstOperand = null;
-	calculator.operator = null;
+	calculator.firstOperand = '';
+	calculator.operator = '';
 	calculator.waitingForSecondOperand = false;
 	calculator.equals = '';
 	calculator.result = '';
