@@ -1,8 +1,3 @@
-/*
-TODO:
-- Handle division by 0
-*/
-
 // DOM elements
 const elements = {
 	firstOperandDisplay: document.querySelector('.first-operand-display'),
@@ -27,9 +22,6 @@ const calculator = {
 	equals: '',
 	result: '',
 };
-
-// Global variables
-let result = null;
 
 // Display functions
 function updateDisplay() {
@@ -67,6 +59,7 @@ function appendDecimal() {
 
 function setOperator(op) {
 	if (calculator.result) {
+		const result = calculator.result;
 		clearValues();
 		calculator.firstOperand = result;
 		calculator.operator = op;
@@ -89,14 +82,12 @@ function setOperator(op) {
 
 		// case where the operator is already set:
 	} else if (calculator.operator) {
-		result = operate(
+		calculator.result = getResult(
 			calculator.firstOperand,
 			calculator.operator,
-			parseFloat(calculator.currentInput)
+			calculator.currentInput
 		);
-		result = round(result);
-		calculator.result = `${result}`;
-		calculator.firstOperand = result;
+		calculator.firstOperand = calculator.result;
 		calculator.currentInput = '';
 		calculator.result = '';
 	}
@@ -106,23 +97,36 @@ function setOperator(op) {
 	updateDisplay();
 }
 
-function getResult() {
+function setResult() {
 	if (
 		calculator.operator &&
 		calculator.firstOperand !== null &&
 		calculator.currentInput !== ''
 	) {
-		result = operate(
+		calculator.result = getResult(
 			calculator.firstOperand,
 			calculator.operator,
-			parseFloat(calculator.currentInput)
+			calculator.currentInput
 		);
-		result = round(result);
-		calculator.result = `${result}`;
 		calculator.equals = '=';
 		calculator.waitingForSecondOperand = true;
 		updateDisplay();
 	}
+}
+
+function getResult(a, op, b) {
+	const result = operate(a, op, b);
+	if (result === 'Error' || isNaN(result)) {
+		return handleError();
+	} else {
+		return round(result);
+	}
+}
+
+function handleError() {
+	elements.resultDisplay.classList.add('error-display');
+	toggleButtons(true);
+	return 'Error. Press Clear';
 }
 
 function round(num) {
@@ -143,6 +147,10 @@ function clearValues() {
 	calculator.waitingForSecondOperand = false;
 	calculator.equals = '';
 	calculator.result = '';
+
+	// error handling
+	elements.resultDisplay.classList.remove('error-display');
+	toggleButtons(false);
 	updateDisplay();
 }
 
@@ -161,18 +169,33 @@ function initEventListeners() {
 	// delete
 	elements.delBtn.addEventListener('click', deleteLastDigit);
 	// equals
-	elements.equalsBtn.addEventListener('click', getResult);
+	elements.equalsBtn.addEventListener('click', setResult);
 	// decimals
 	elements.decimal.addEventListener('click', appendDecimal);
+}
+
+// Stop all events, but keep clear, when there is an Error
+function toggleButtons(booleanValue) {
+	[
+		...elements.numBtns,
+		...elements.operatorBtns,
+		elements.decimal,
+		elements.equalsBtn,
+		elements.delBtn,
+	].forEach((btn) => {
+		btn.disabled = booleanValue;
+	});
 }
 
 // Calculation Logic
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+const divide = (a, b) => (b === 0 ? 'Error' : a / b);
 
 const operate = (a, operator, b) => {
+	if (typeof a === 'string') a = parseFloat(a);
+	if (typeof b === 'string') b = parseFloat(b);
 	switch (operator) {
 		case '+':
 			return add(a, b);
@@ -183,7 +206,7 @@ const operate = (a, operator, b) => {
 		case '×':
 			return multiply(a, b);
 		default:
-			return 'ERROR';
+			return 'Error';
 	}
 };
 
