@@ -104,6 +104,10 @@ function setOperator(op) {
 }
 
 function setResult() {
+	// Little Easter Egg for my special person:
+	if (calculator.currentInput === '02082024' || '2082024') {
+		elements.resultDisplay.textContent = 'i <3 u';
+	}
 	if (
 		calculator.operator &&
 		calculator.firstOperand !== '' &&
